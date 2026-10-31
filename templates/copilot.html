@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}AI Benefit Copilot — BenefitBridge{% endblock %}
+{% block content %}
+<section class="container copilot-layout">
+    <article class="card">
+        <h1>AI Benefit Copilot</h1>
+        <p>Context: {{ scheme.name }} · {{ result.get_status_display }} · {{ result.match_score }}% match</p>
+        <form id="copilot-form" method="post">
+            {% csrf_token %}
+            {{ form.question }}
+            {{ form.question.errors }}
+            <button class="btn btn-primary" type="submit">Ask</button>
+        </form>
+        <div class="suggestions">
+            {% for item in suggestions %}
+            <button class="chip" type="button" data-question="{{ item }}">{{ item }}</button>
+            {% endfor %}
+        </div>
+    </article>
+    <article class="card">
+        <h2>Response</h2>
+        <p id="provider-label" class="badge">{% if report %}{% if report.generated_by_ai %}Powered by Gemini AI{% else %}Rule-based fallback mode{% endif %}{% else %}Waiting for a question{% endif %}</p>
+        <pre id="copilot-response" class="ai-output">{% if report %}{{ report.content }}{% else %}Ask a question about this eligibility report.{% endif %}</pre>
+        <p id="copilot-status" class="disclaimer"></p>
+    </article>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.querySelectorAll(".chip").forEach((button) => {
+  button.addEventListener("click", () => {
+    document.querySelector("#id_question").value = button.dataset.question;
+  });
+});
+</script>
+{% endblock %}

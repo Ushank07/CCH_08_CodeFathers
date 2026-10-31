@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BenefitBridge{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              navy: "#0B1020",
+              card: "#172033",
+              ink: "#111827",
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="bg-navy text-slate-100 min-h-screen">
+    <header class="navbar">
+        <a class="brand" href="{% url 'landing' %}">
+            <span style="background: linear-gradient(135deg, #38BDF8, #818CF8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">BenefitBridge</span>
+        </a>
+        <nav>
+            <a href="{% url 'landing' %}">Home</a>
+            <a href="{% url 'check_eligibility' %}">Check Eligibility</a>
+            <a href="{% url 'gap_simulator' %}">Gap Simulator</a>
+            <a href="{% url 'applicant_documents' %}">Document Locker</a>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'scheme_catalogue' %}">Schemes</a>
+            <a href="{% url 'copilot' %}">AI Copilot</a>
+            <a href="{% url 'profile' %}">Profile</a>
+        </nav>
+    </header>
+    {% if messages %}
+    <div class="container mt-4">
+        {% for message in messages %}
+        <div class="notice notice-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        BenefitBridge is an informational hackathon prototype. It does not replace official government portals
+        and does not provide legally binding eligibility decisions. Final eligibility is determined by the relevant authority.
+        Tailwind CSS is loaded from a CDN for this prototype.
+    </footer>
+    <script src="{% static 'js/app.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

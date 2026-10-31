@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Citizen profile — BenefitBridge{% endblock %}
+{% block content %}
+<section class="container">
+    <h1>Smart user profile</h1>
+    <p class="lede">Enter your details once. BenefitBridge reuses them for every eligibility check. Unknown values are never treated as a pass.</p>
+    <form method="post" class="card form-grid">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <label class="{% if field.field.widget.input_type == 'checkbox' %}check-row{% endif %}">
+                <span>{{ field.label }}</span>
+                {{ field }}
+                {{ field.errors }}
+            </label>
+        {% endfor %}
+        <div class="form-actions">
+            <button class="btn btn-outline" type="submit" name="action" value="save">Save profile</button>
+            <button class="btn btn-primary" type="submit" name="action" value="find">Find My Benefits</button>
+        </div>
+    </form>
+    <form method="post" action="{% url 'load_demo_profile' %}" class="mt-4">
+        {% csrf_token %}
+        <button class="btn btn-outline" type="submit">Load Strong Match demo profile (Ananya Deshmukh)</button>
+    </form>
+</section>
+{% endblock %}

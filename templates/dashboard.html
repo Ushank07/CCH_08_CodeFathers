@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — BenefitBridge{% endblock %}
+{% block content %}
+<section class="container">
+    <h1>Eligibility dashboard</h1>
+    <p class="lede">Hello {{ profile.full_name }}. These figures come from saved rule-engine results, not invented statistics.</p>
+    <div class="grid grid-cols-3">
+        <article class="card stat"><strong>{{ counts.total }}</strong><span>Relevant schemes</span></article>
+        <article class="card stat success"><strong>{{ counts.strong }}</strong><span>Strong matches</span></article>
+        <article class="card stat warn"><strong>{{ counts.potential }}</strong><span>Potential matches</span></article>
+        <article class="card stat danger"><strong>{{ counts.no }}</strong><span>Not eligible</span></article>
+        <article class="card stat"><strong>{{ counts.missing_documents }}</strong><span>Schemes with missing documents</span></article>
+        <article class="card stat"><strong>{{ readiness_avg }}%</strong><span>Average application readiness</span></article>
+    </div>
+    <article class="card mt-4">
+        <h2>AI-generated insight</h2>
+        <p>{{ insight }}</p>
+        <p class="disclaimer">Insight is derived from stored eligibility records. Gemini is used on the copilot and letter screens when an API key is configured.</p>
+    </article>
+    <div class="grid grid-cols-2 mt-4">
+        <article class="card">
+            <h2>Recommended schemes</h2>
+            {% for item in recommended %}
+                <a class="result-row" href="{% url 'scheme_detail' item.scheme.pk %}">
+                    <span>{{ item.scheme.name }}</span>
+                    <span class="badge badge-{{ item.status }}">{{ item.get_status_display }} · {{ item.match_score }}%</span>
+                </a>
+            {% empty %}
+                <p>No results yet.</p>
+            {% endfor %}
+        </article>
+        <article class="card">
+            <h2>Quick actions</h2>
+            <a class="btn btn-primary" href="{% url 'profile' %}">Edit profile</a>
+            <a class="btn btn-outline" href="{% url 'scheme_catalogue' %}">Open catalogue</a>
+            <a class="btn btn-outline" href="{% url 'copilot' %}">Ask the copilot</a>
+        </article>
+    </div>
+    <h2 class="mt-4">All match results</h2>
+    <div class="grid grid-cols-3">
+        {% for item in results %}
+        <article class="card">
+            <h3>{{ item.scheme.name }}</h3>
+            <div class="score-ring" style="--score: {{ item.match_score }}">
+                <span>{{ item.match_score }}%</span>
+            </div>
+            <p class="badge badge-{{ item.status }}">{{ item.get_status_display }}</p>
+            <p>Readiness {{ item.readiness_score }}%</p>
+            <a class="btn btn-primary" href="{% url 'eligibility_report' item.scheme.pk %}">Why do I match?</a>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

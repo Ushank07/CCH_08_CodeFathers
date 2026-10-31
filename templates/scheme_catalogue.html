@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Scheme catalogue — BenefitBridge{% endblock %}
+{% block content %}
+<section class="container">
+    <h1>Government scheme catalogue</h1>
+    <p class="disclaimer">Sample schemes with simplified prototype rules. Official URLs point to public government portals for navigation only.</p>
+    <form method="get" class="filter-bar card">
+        <input class="input" type="search" name="q" value="{{ query }}" placeholder="Search schemes">
+        <select class="input" name="category">
+            <option value="">All categories</option>
+            {% for value, label in categories %}
+                <option value="{{ value }}" {% if category == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-primary" type="submit">Filter</button>
+    </form>
+    <div class="grid grid-cols-3">
+        {% for card in cards %}
+        <article class="card">
+            <p class="eyebrow">{{ card.scheme.get_category_display }}</p>
+            <h2>{{ card.scheme.name }}</h2>
+            <p>{{ card.scheme.description|truncatewords:28 }}</p>
+            <p><strong>Benefits:</strong> {{ card.scheme.benefits|truncatewords:18 }}</p>
+            {% if card.result %}
+                <p class="badge badge-{{ card.result.status }}">{{ card.result.get_status_display }} · {{ card.result.match_score }}%</p>
+            {% endif %}
+            <a class="btn btn-primary" href="{% url 'scheme_detail' card.scheme.pk %}">View details</a>
+            {% if card.scheme.official_url %}
+            <a class="btn btn-outline" href="{{ card.scheme.official_url }}" target="_blank" rel="noopener">Official portal</a>
+            {% endif %}
+        </article>
+        {% empty %}
+        <p>No matching schemes.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

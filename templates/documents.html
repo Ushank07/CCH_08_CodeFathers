@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Document centre — {{ scheme.name }}{% endblock %}
+{% block content %}
+<section class="container">
+    <h1>Document centre</h1>
+    <p class="lede">{{ scheme.name }} · readiness {{ result.readiness_score }}%</p>
+    <p class="disclaimer">BenefitBridge checks submission, file type, and file size only. It does not verify the official authenticity of certificates.</p>
+    <div class="grid grid-cols-2">
+        <article class="card">
+            <h2>Uploaded</h2>
+            {% for item in checklist.uploaded %}
+                <p>{{ item.name }} — {{ item.upload.get_status_display }} ({{ item.upload.original_name }})</p>
+            {% empty %}
+                <p>No documents uploaded yet.</p>
+            {% endfor %}
+        </article>
+        <article class="card">
+            <h2>Pending</h2>
+            {% for item in checklist.missing %}
+                <form method="post" enctype="multipart/form-data" action="{% url 'upload_document' scheme.pk item.id %}" class="upload-row">
+                    {% csrf_token %}
+                    <label>
+                        <span>{{ item.name }} {% if item.mandatory %}(mandatory){% else %}(optional){% endif %}</span>
+                        <input class="input" type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </label>
+                    <button class="btn btn-primary" type="submit">Upload</button>
+                </form>
+            {% empty %}
+                <p>All listed documents have been submitted.</p>
+            {% endfor %}
+        </article>
+    </div>
+    <a class="btn btn-outline mt-4" href="{% url 'eligibility_report' scheme.pk %}">Recalculated eligibility report</a>
+</section>
+{% endblock %}

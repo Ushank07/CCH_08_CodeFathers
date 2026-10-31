@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Application assistant — BenefitBridge{% endblock %}
+{% block content %}
+<section class="container">
+    <h1>AI application and appeal assistant</h1>
+    <p class="lede">{{ scheme.name }} · {{ result.get_status_display }} · {{ result.match_score }}% informational match</p>
+    <div class="grid grid-cols-3">
+        <form method="post" class="card">
+            {% csrf_token %}
+            <input type="hidden" name="kind" value="plan">
+            <h2>AI action plan</h2>
+            <p>Generate prioritized next steps from missing conditions and documents.</p>
+            <button class="btn btn-primary" type="submit">Generate action plan</button>
+        </form>
+        <form method="post" class="card">
+            {% csrf_token %}
+            <input type="hidden" name="kind" value="application">
+            <h2>Application letter</h2>
+            <p>Create a professional draft using your profile and this scheme. Do not invent extra facts.</p>
+            <button class="btn btn-primary" type="submit">Generate application letter</button>
+        </form>
+        <form method="post" class="card">
+            {% csrf_token %}
+            <input type="hidden" name="kind" value="appeal">
+            <h2>Appeal letter</h2>
+            {{ appeal_form.rejection_reason }}
+            {{ appeal_form.rejection_reason.errors }}
+            <button class="btn btn-primary" type="submit">Generate appeal draft</button>
+        </form>
+    </div>
+    {% for key, item in latest.items %}
+        {% if item %}
+        <article class="card mt-4">
+            <h2>{{ item.get_report_type_display }}</h2>
+            <p class="badge">{% if item.generated_by_ai %}Powered by Gemini AI{% else %}Rule-based fallback mode{% endif %}</p>
+            <textarea class="input ai-output" rows="14" id="draft-{{ key }}">{{ item.content }}</textarea>
+            <button class="btn btn-outline copy-btn" type="button" data-target="draft-{{ key }}">Copy draft</button>
+        </article>
+        {% endif %}
+    {% endfor %}
+    {% if scheme.official_url %}
+    <a class="btn btn-primary mt-4" href="{{ scheme.official_url }}" target="_blank" rel="noopener">Continue on the official portal</a>
+    {% endif %}
+</section>
+{% endblock %}

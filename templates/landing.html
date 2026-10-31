@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}BenefitBridge — From Am I Eligible? to What Should I Do Next?{% endblock %}
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">AI-powered government benefit eligibility copilot</p>
+    <h1>From “Am I Eligible?” to “What Should I Do Next?”</h1>
+    <p class="lede">
+        People miss welfare benefits because schemes are hard to discover and harder to apply for.
+        BenefitBridge matches a citizen profile to configurable scheme rules, explains the result,
+        checks documents, and prepares the last-mile application steps.
+    </p>
+    <div class="hero-actions">
+        <a class="btn btn-primary" href="{% url 'profile' %}">Check My Benefits</a>
+        <a class="btn btn-outline" href="{% url 'scheme_catalogue' %}">Browse sample schemes</a>
+    </div>
+    <p class="disclaimer">{{ scheme_count }} active prototype schemes are loaded for this demo.</p>
+</section>
+
+<section class="container grid grid-cols-3 landing-grid">
+    <article class="card">
+        <h2>The problem</h2>
+        <p>Citizens often do not know which government schemes they may qualify for, which conditions they fail, or which documents they still need.</p>
+    </article>
+    <article class="card">
+        <h2>The solution</h2>
+        <p>Create a profile, run a transparent rule engine, then use Gemini (or a labelled fallback) to explain results and generate next steps.</p>
+    </article>
+    <article class="card">
+        <h2>The differentiator</h2>
+        <p>We don’t just tell citizens what they may qualify for. We tell them why, what’s missing, and what to do next.</p>
+    </article>
+</section>
+
+<section class="container mt-4">
+    <h2>How it works</h2>
+    <ol class="steps">
+        <li>Create a reusable profile</li>
+        <li>Match against configurable scheme rules</li>
+        <li>See match score, gaps, and documents</li>
+        <li>Upload files and recalculate readiness</li>
+        <li>Ask the AI copilot and generate letters</li>
+        <li>Continue on the official portal</li>
+    </ol>
+</section>
+{% endblock %}

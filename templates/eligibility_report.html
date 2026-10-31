@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Eligibility report — {{ scheme.name }}{% endblock %}
+{% block content %}
+<section class="container">
+    <h1>Eligibility report</h1>
+    <p class="lede">{{ scheme.name }} for {{ profile.full_name }}</p>
+    <div class="grid grid-cols-3">
+        <article class="card"><h2>Status</h2><p class="badge badge-{{ result.status }}">{{ status }}</p></article>
+        <article class="card"><h2>Match</h2><div class="score-ring" style="--score: {{ match_score }}"><span>{{ match_score }}%</span></div></article>
+        <article class="card"><h2>Readiness</h2><div class="score-ring" style="--score: {{ readiness_score }}"><span>{{ readiness_score }}%</span></div></article>
+    </div>
+    <div class="grid grid-cols-2 mt-4">
+        <article class="card">
+            <h2>Satisfied conditions</h2>
+            <ul>{% for item in satisfied %}<li>{{ item.reason }}</li>{% empty %}<li>None yet.</li>{% endfor %}</ul>
+        </article>
+        <article class="card">
+            <h2>Unmet conditions</h2>
+            <ul>{% for item in unmet %}<li>{{ item.reason }}</li>{% empty %}<li>None.</li>{% endfor %}</ul>
+        </article>
+        <article class="card">
+            <h2>Missing profile information</h2>
+            <ul>{% for item in missing_profile %}<li>{{ item.reason }}</li>{% empty %}<li>No missing fields for these rules.</li>{% endfor %}</ul>
+        </article>
+        <article class="card">
+            <h2>Document checklist</h2>
+            <ul>
+                {% for item in documents.uploaded %}<li>Uploaded: {{ item.name }}</li>{% endfor %}
+                {% for item in documents.pending_mandatory %}<li>Pending: {{ item.name }}</li>{% empty %}<li>No mandatory documents pending.</li>{% endfor %}
+            </ul>
+        </article>
+    </div>
+    {% if readiness %}
+    <article class="card mt-4">
+        <h2>How readiness was calculated</h2>
+        <p>{{ readiness.formula }}</p>
+        <p>Eligibility component: {{ readiness.match_component }} · Profile component: {{ readiness.profile_component }} · Documents component: {{ readiness.document_component }}</p>
+        <p class="disclaimer">{{ readiness.disclaimer }} {{ disclaimer }}</p>
+    </article>
+    {% endif %}
+    <div class="hero-actions mt-4">
+        <a class="btn btn-primary" href="{% url 'documents' scheme.pk %}">Upload documents</a>
+        <a class="btn btn-outline" href="{% url 'copilot_scheme' scheme.pk %}">Ask the copilot</a>
+        <a class="btn btn-outline" href="{% url 'application_assistant' scheme.pk %}">Generate next steps</a>
+        {% if scheme.official_url %}<a class="btn btn-outline" href="{{ scheme.official_url }}" target="_blank" rel="noopener">Official portal</a>{% endif %}
+    </div>
+</section>
+{% endblock %}

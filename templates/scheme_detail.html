@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ scheme.name }} — BenefitBridge{% endblock %}
+{% block content %}
+<section class="container">
+    <p class="eyebrow">{{ scheme.get_category_display }}</p>
+    <h1>{{ scheme.name }}</h1>
+    <p>{{ scheme.description }}</p>
+    <p><strong>Benefits:</strong> {{ scheme.benefits }}</p>
+    <p class="disclaimer">{{ scheme.prototype_note }}</p>
+    {% if result %}
+    <div class="grid grid-cols-2 mt-4">
+        <article class="card">
+            <h2>Match score</h2>
+            <div class="score-ring" style="--score: {{ match_score }}"><span>{{ match_score }}%</span></div>
+            <p class="badge badge-{{ result.status }}">{{ status }}</p>
+            <p class="disclaimer">{{ disclaimer }}</p>
+        </article>
+        <article class="card">
+            <h2>Why do I match?</h2>
+            <ul>
+                {% for item in satisfied %}<li>{{ item.reason }}</li>{% empty %}<li>No conditions are currently satisfied.</li>{% endfor %}
+            </ul>
+            <h3>Conditions to review</h3>
+            <ul>
+                {% for item in unmet %}<li>{{ item.reason }}</li>{% endfor %}
+                {% for item in missing_profile %}<li>{{ item.reason }}</li>{% endfor %}
+            </ul>
+        </article>
+    </div>
+    {% endif %}
+    <article class="card mt-4">
+        <h2>Required documents</h2>
+        <ul>
+            {% for doc in scheme.documents.all %}
+            <li>{{ doc.name }} {% if doc.mandatory %}(mandatory){% else %}(optional){% endif %}</li>
+            {% endfor %}
+        </ul>
+    </article>
+    <div class="hero-actions mt-4">
+        {% if profile %}
+        <a class="btn btn-primary" href="{% url 'eligibility_report' scheme.pk %}">Eligibility report</a>
+        <a class="btn btn-outline" href="{% url 'documents' scheme.pk %}">Document centre</a>
+        <a class="btn btn-outline" href="{% url 'copilot_scheme' scheme.pk %}">Ask AI copilot</a>
+        <a class="btn btn-outline" href="{% url 'application_assistant' scheme.pk %}">Letters & action plan</a>
+        {% else %}
+        <a class="btn btn-primary" href="{% url 'profile' %}">Create a profile to match</a>
+        {% endif %}
+        {% if scheme.official_url %}
+        <a class="btn btn-primary" href="{{ scheme.official_url }}" target="_blank" rel="noopener">Open official portal</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
